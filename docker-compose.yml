@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+    notable:
+        build:
+            context: ./services/notable
+            dockerfile: Dockerfile
+        volumes:
+            - './services/notable:/usr/src/app'
+        ports:
+            - 5001:5000
+        environment:
+            - FLASK_ENV=development
+            - APP_SETTINGS=project.config.DevelopmentConfig
+            - DATABASE_URL=postgres://postgres:postgres@notable-db:5432/notable_dev
+            - DATABASE_TEST_URL=postgres://postgres:postgres@notable-db:5432/notable_test
+        depends_on:
+            - notable-db
+
+    notable-db:
+        build:
+            context: ./services/notable/project/db
+            dockerfile: Dockerfile
+        ports:
+            - 5435:5432
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
