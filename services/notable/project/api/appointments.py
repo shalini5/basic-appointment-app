@@ -61,12 +61,19 @@ class AppointmentAdd(Resource):
                     'message': 'This slot is not available.'
                 }, 400
 
-            db.session.add(Appointment(appointment=requested_slot, doctor_id=doctor_id, type=appt_type))
-            db.session.commit()
-            return {
-                'status': "success",
-                'message': f"Appointment at {requested_slot} was added successfully!"
-            }, 201
+            if cur_appointments < 3:
+                db.session.add(Appointment(appointment=requested_slot, doctor_id=doctor_id, type=appt_type))
+                db.session.commit()
+                return {
+                    'status': "success",
+                    'message': f"Appointment at {requested_slot} was added successfully!"
+                }, 201
+
+            else:
+                return {
+                    'status': 'fail',
+                    'message': 'This slot is not available.'
+                }, 400
 
         except Exception as e:
             print(f'Post failed with error {e}')
