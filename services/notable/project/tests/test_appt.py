@@ -64,6 +64,29 @@ class TestApptService(BaseTestCase):
             self.assertEqual(response.status_code, 201)
             self.assertIn('success', data['status'])
 
+    def test_add_appt_three_appt(self):
+        """Ensure a new appt can be added to the database."""
+        doctor = add_doctor('michael', 'michael@gmail.com')
+        slot = datetime(2019, 9, 22, 15, 45)
+        for i in range(3):
+            appointment = add_appointment(slot, "new_patient", doctor.id)
+        with self.client:
+            response = self.client.post(
+                '/appointments',
+                data=json.dumps(
+                    {
+                        "appointment": datetime(2019, 9, 22, 15, 45).strftime("%m/%d/%Y, %H:%M:%S"),
+                        "doctor_id": doctor.id,
+                        "type": "follow up"
+                    }
+                ),
+                content_type="application/json",
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('fail', data['status'])
+            self.assertIn('This slot is not available.', data['message'])
+
     def test_delete(self):
         """"Ensure delete appt works"""
         slot = datetime(2019, 9, 22, 15, 45)
