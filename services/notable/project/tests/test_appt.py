@@ -2,7 +2,6 @@
 
 from datetime import datetime
 import json
-import unittest
 
 from project.tests.base import BaseTestCase
 from project import db
@@ -34,7 +33,7 @@ class TestApptService(BaseTestCase):
                 '/appointments',
                 data=json.dumps(
                     {
-                        "appointment": datetime(2019, 9, 22, 15, 0).strftime("%m/%d/%Y, %H:%M:%S"),
+                        "appointment": datetime(2019, 9, 22, 15, 0).strftime("%Y-%m-%d %H:%M:%S"),
                         "doctor_id": doctor.id,
                         "type": "follow up"
                     }
@@ -53,7 +52,7 @@ class TestApptService(BaseTestCase):
                 '/appointments',
                 data=json.dumps(
                     {
-                        "appointment": datetime(2019, 9, 22, 18, 0).strftime("%m/%d/%Y, %H:%M:%S"),
+                        "appointment": datetime(2019, 9, 22, 18, 0).strftime("%Y-%m-%d %H:%M:%S"),
                         "doctor_id": doctor.id,
                         "type": "follow up"
                     }
@@ -75,7 +74,7 @@ class TestApptService(BaseTestCase):
                 '/appointments',
                 data=json.dumps(
                     {
-                        "appointment": datetime(2019, 9, 22, 15, 45).strftime("%m/%d/%Y, %H:%M:%S"),
+                        "appointment": datetime(2019, 9, 22, 15, 45).strftime("%Y-%m-%d %H:%M:%S"),
                         "doctor_id": doctor.id,
                         "type": "follow up"
                     }
@@ -131,7 +130,7 @@ class TestApptService(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
-            self.assertIn('Invalid payload.', data['message'])
+            self.assertIn('Invalid date format, please enter appointment slot in format YYYY-MM-DD hh:mm:ss.', data['message'])
             self.assertIn('fail', data['status'])
 
     def test_single_appt_no_id(self):
@@ -153,6 +152,3 @@ class TestApptService(BaseTestCase):
             print(data)
             self.assertIn('success', data['status'])
 
-
-if __name__ == '__main__':
-    unittest.main()

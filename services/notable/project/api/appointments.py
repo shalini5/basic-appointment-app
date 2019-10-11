@@ -15,6 +15,18 @@ api = Api(appt_blueprint)
 ACCEPTABLE_SLOTS_MINUTES = ['00', '15', '30', '45']
 
 
+def validate_date(date_text):
+    if not date_text:
+        return False
+
+    try:
+        if date_text != datetime.strptime(date_text, "%Y-%m-%d %H:%M:%S").strftime('%Y-%m-%d %H:%M:%S'):
+            raise ValueError
+        return True
+    except ValueError:
+        return False
+
+
 class AppointmentAdd(Resource):
     def post(self):
         """Add a new appointment"""
@@ -31,16 +43,21 @@ class AppointmentAdd(Resource):
         doctor_id = post_data.get('doctor_id')
         appt_type = post_data.get('type')
 
+        # Validate the date format
+        if not validate_date(slot):
+            return {
+                'status': 'fail',
+                'message': 'Invalid date format, please enter appointment slot in format YYYY-MM-DD hh:mm:ss.'
+            }, 400
+
         try:
             # Time check
-            # TODO: can use one of the datetime functions but I could not remember teh usage properly.
-            date_str = slot.split(',')[0]
-            time_str = slot.split(',')[1]
-            month = date_str.split('/')[0]
-            day = date_str.split('/')[1]
-            year = date_str.split('/')[2]
-            hh = time_str.split(':')[0]
-            mm = time_str.split(':')[1]
+            dt_obj = datetime.strptime(slot, "%Y-%m-%d %H:%M:%S")
+            year = dt_obj.strftime("%Y")
+            month = dt_obj.strftime("%m")
+            day = dt_obj.strftime("%d")
+            hh = dt_obj.strftime("%H")
+            mm = dt_obj.strftime("%M")
 
             if mm not in ACCEPTABLE_SLOTS_MINUTES:
                 return {

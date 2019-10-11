@@ -1,8 +1,6 @@
 # services/notable/project/tests/test_doctors.py
 
-
 import json
-import unittest
 
 from project.tests.base import BaseTestCase
 from project import db
@@ -143,7 +141,3 @@ class TestDoctorService(BaseTestCase):
             self.assertIn(
                 'xyz@gmail.com', data['data']['doctors'][1]['email'])
             self.assertIn('success', data['status'])
-
-
-if __name__ == '__main__':
-    unittest.main()

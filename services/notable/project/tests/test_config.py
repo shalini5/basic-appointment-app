@@ -1,8 +1,6 @@
 # services/notable/project/tests/test_config.py
 
-
 import os
-import unittest
 
 from flask import current_app
 from flask_testing import TestCase
@@ -50,6 +48,3 @@ class TestProductionConfig(TestCase):
         self.assertTrue(app.config['SECRET_KEY'] == 'my_precious')
         self.assertFalse(app.config['TESTING'])
 
-
-if __name__ == '__main__':
-    unittest.main()
